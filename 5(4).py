@@ -10,7 +10,11 @@ def input_error(func):
             return "Index out of range."
     return inner
 
-contacts = {}
+@input_error
+def parse_input(user_input):
+    cmd, *args = user_input.split()
+    cmd = cmd.strip().lower()
+    return cmd, *args
 
 @input_error
 def add_contact(args, contacts):
@@ -19,28 +23,41 @@ def add_contact(args, contacts):
     return "Contact added."
 
 @input_error
-def get_phone(args, contacts):
-    name = args[0]
-    phone = contacts.get(name, "Contact not found.")
-    return f"{name}: {phone}"
+def change_contact(args, contacts):
+    if args[0] in contacts.keys():
+        add_contact(args, contacts)
+    else: 
+        raise(Exception())
+    return "Contact changed."
 
 @input_error
-def list_all(args, contacts):
-    result = "\n".join([f"{name}: {phone}" for name, phone in contacts.items()])
-    return result
+def show_all(args,contacts):
+    for key in contacts:
+        print(f"{key:10} : {contacts[key]:10}")
 
-while True:
-    command = input("Enter a command: ").strip().lower()
-    if command == "add":
-        arguments = input("Enter the argument for the command: ").split()
-        print(add_contact(arguments, contacts))
-    elif command == "phone":
-        arguments = input("Enter the argument for the command: ").split()
-        print(get_phone(arguments, contacts))
-    elif command == "all":
-        arguments = input("Enter the argument for the command: ").split()
-        print(list_all(arguments, contacts))
-    elif command == "exit":
-        break
-    else:
-        print("Unknown command. Try again.")
+@input_error
+def main():
+    contacts = {}
+    print("Welcome to the assistant bot!")
+    while True:
+        user_input = input("Enter a command: ")
+        command, *args = parse_input(user_input)
+
+        if command in ["close", "exit"]:
+            print("Good bye!")
+            break
+        elif command == "hello":
+            print("How can I help you?")
+        elif command == "add":
+            print(add_contact(args, contacts))
+        elif command == "change":
+            print(change_contact(args, contacts))
+        elif command == "show":
+            print(contacts[args[0]] if args[0] in contacts.keys() else "Nothing to show.")
+        elif command == "all":
+            print(show_all(args, contacts))
+        else:
+            print("Invalid command.")
+
+if __name__ == "__main__":
+    main()
