@@ -54,6 +54,8 @@ def main():
             print(change_contact(args, contacts))
         elif command == "show":
             print(contacts[args[0]] if args[0] in contacts.keys() else "Nothing to show.")
+        elif command == "phone":
+            print(contacts[args[0]] if args[0] in contacts else "Nothing to show.")
         elif command == "all":
             print(show_all(args, contacts))
         else:
